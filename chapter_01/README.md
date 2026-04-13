@@ -1,4 +1,4 @@
-# NSL / Verilog / SystemC Tutorial (What I Did)
+# NSL / Verilog / SystemC Tutorial
 
 ## 1. NSL → Verilog → Simulation
 
