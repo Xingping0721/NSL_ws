@@ -1,0 +1,22 @@
+declare real_num simulation {}
+
+module real_num {
+
+    reg out[8];
+    reg count[8] = 0;
+
+    count++;
+
+    out := _int(_sin(45.0/180.0) * 255.0);
+
+    _display("out = %d", out);
+
+    if(count == 200) _finish("bye");
+}
+
+
+
+// however, during simulation, in the first cycle,
+// the update of out and the _display statement
+// are executed using non-blocking assignment,
+// so out is still undefined (x) when it is displayed.
