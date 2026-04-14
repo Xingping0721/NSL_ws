@@ -1,0 +1,13 @@
+/**
+ * Tutorial 4: if-else statement
+ */
+
+declare tut4 simulation {}
+
+module tut4 {
+    reg count[8] = 0;
+    count++;
+
+    if(count >= 0 && count <= 10) _display("ok lah: %d", count);
+    else _finish("bye");
+}

@@ -1,0 +1,15 @@
+/**
+ * Tutorial 4: if-else statement
+ */
+
+declare tut4_any simulation {}
+
+module tut4_any {
+    reg count[8] = 0;
+    count++;
+
+    any {
+        count==100: _display("OK lah");
+        count==200: _finish("bye");
+    }
+}
