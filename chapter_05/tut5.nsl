@@ -1,0 +1,32 @@
+/**
+ * chapter 05, calculation
+*/
+
+
+
+declare tut5 simulation { }
+
+module tut5 {
+    reg count[5]=0;
+    wire x[5],y[5];
+
+    // wire tmp[5];
+
+    any {
+        count < 10 : {
+            // tmp = count;  // when i assign a value to a wire, 
+            //               // it will be updated immediately.
+            //               // we have to use "=" to assign value to wires, and ":="
+            //               // to assign value to registers.
+
+        //    _display("x=%d,y=%d,count=%d,tmp=%d", x, y, count, tmp);
+            _display("x=%d,y=%d,count=%d", x, y, count);
+            count := x;
+            y = x + 1;  // x and y are wires,
+            x = count + 1;  // so they will be updated immediately when count changes
+
+        }
+        count >= 10:
+        _finish("End");
+    }
+}
