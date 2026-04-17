@@ -1,0 +1,140 @@
+#! /usr/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 9;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+S_0x63491a2fdcf0 .scope module, "tb" "tb" 2 69;
+ .timescale -9 -9;
+P_0x63491a32a300 .param/l "tCYC" 0 2 70, +C4<00000000000000000000000000000010>;
+P_0x63491a32a340 .param/l "tPD" 0 2 71, +C4<00000000000000000000000000000000>;
+v0x63491a3543e0_0 .var "m_clock", 0 0;
+v0x63491a354480_0 .var "p_reset", 0 0;
+S_0x63491a2fdf20 .scope module, "tut6_instance" "tut6" 2 76, 2 14 0, S_0x63491a2fdcf0;
+ .timescale -9 -9;
+    .port_info 0 /INPUT 1 "p_reset";
+    .port_info 1 /INPUT 1 "m_clock";
+L_0x63491a329370 .functor BUFZ 1, L_0x63491a364d80, C4<0>, C4<0>, C4<0>;
+L_0x745271fb7018 .functor BUFT 1, C4<00000001>, C4<0>, C4<0>, C4<0>;
+v0x63491a329490_0 .net/2u *"_ivl_0", 7 0, L_0x745271fb7018;  1 drivers
+L_0x745271fb70f0 .functor BUFT 1, C4<00000011>, C4<0>, C4<0>, C4<0>;
+v0x63491a329910_0 .net/2u *"_ivl_10", 7 0, L_0x745271fb70f0;  1 drivers
+v0x63491a3536b0_0 .net *"_ivl_12", 7 0, L_0x63491a354890;  1 drivers
+L_0x745271fb7138 .functor BUFT 1, C4<00000000>, C4<0>, C4<0>, C4<0>;
+v0x63491a353770_0 .net/2u *"_ivl_14", 7 0, L_0x745271fb7138;  1 drivers
+v0x63491a353850_0 .net *"_ivl_16", 7 0, L_0x63491a354a20;  1 drivers
+L_0x745271fb7180 .functor BUFT 1, C4<xxxxxxxx>, C4<0>, C4<0>, C4<0>;
+v0x63491a353980_0 .net *"_ivl_18", 7 0, L_0x745271fb7180;  1 drivers
+L_0x745271fb7060 .functor BUFT 1, C4<00000000>, C4<0>, C4<0>, C4<0>;
+v0x63491a353a60_0 .net/2u *"_ivl_2", 7 0, L_0x745271fb7060;  1 drivers
+L_0x745271fb71c8 .functor BUFT 1, C4<0000000000000000000000000000000000000000000000000000000001100100>, C4<0>, C4<0>, C4<0>;
+v0x63491a353b40_0 .net/2u *"_ivl_24", 63 0, L_0x745271fb71c8;  1 drivers
+v0x63491a353c20_0 .net *"_ivl_4", 7 0, L_0x63491a354580;  1 drivers
+L_0x745271fb70a8 .functor BUFT 1, C4<xxxxxxxx>, C4<0>, C4<0>, C4<0>;
+v0x63491a353d00_0 .net *"_ivl_6", 7 0, L_0x745271fb70a8;  1 drivers
+v0x63491a353de0_0 .net "_net_0", 0 0, L_0x63491a364d80;  1 drivers
+v0x63491a353ea0_0 .var "_time", 63 0;
+v0x63491a353f80_0 .net "m_clock", 0 0, v0x63491a3543e0_0;  1 drivers
+v0x63491a354040_0 .net "p_reset", 0 0, v0x63491a354480_0;  1 drivers
+v0x63491a354100_0 .net "ret", 7 0, L_0x63491a354b90;  1 drivers
+v0x63491a3541e0_0 .net "start", 0 0, L_0x63491a329370;  1 drivers
+v0x63491a3542a0_0 .net "value", 7 0, L_0x63491a3546d0;  1 drivers
+E_0x63491a33c7f0 .event posedge, v0x63491a353f80_0;
+E_0x63491a3219f0 .event posedge, v0x63491a3541e0_0;
+L_0x63491a354580 .functor MUXZ 8, L_0x745271fb7060, L_0x745271fb7018, L_0x63491a364d80, C4<>;
+L_0x63491a3546d0 .functor MUXZ 8, L_0x745271fb70a8, L_0x63491a354580, L_0x63491a364d80, C4<>;
+L_0x63491a354890 .arith/sum 8, L_0x63491a3546d0, L_0x745271fb70f0;
+L_0x63491a354a20 .functor MUXZ 8, L_0x745271fb7138, L_0x63491a354890, L_0x63491a329370, C4<>;
+L_0x63491a354b90 .functor MUXZ 8, L_0x745271fb7180, L_0x63491a354a20, L_0x63491a329370, C4<>;
+L_0x63491a364d80 .cmp/ge 64, v0x63491a353ea0_0, L_0x745271fb71c8;
+    .scope S_0x63491a2fdf20;
+T_0 ;
+    %wait E_0x63491a3219f0;
+    %delay 1, 0;
+    %load/vec4 v0x63491a3541e0_0;
+    %cmpi/e 1, 1, 1;
+    %jmp/0xz  T_0.0, 6;
+    %vpi_call 2 29 "$display", "Warning: control hazard(tut6:start) at %d", $time {0 0 0};
+T_0.0 ;
+    %delay 1, 0;
+    %load/vec4 v0x63491a353de0_0;
+    %cmpi/e 1, 1, 1;
+    %flag_mov 8, 6;
+    %pushi/vec4 0, 0, 1;
+    %flag_set/vec4 9;
+    %flag_or 9, 8;
+    %jmp/0xz  T_0.2, 9;
+    %vpi_call 2 31 "$display", "hazard (_net_0 || 1'b1) line 7 at %d\012", $time {0 0 0};
+T_0.2 ;
+    %jmp T_0;
+    .thread T_0;
+    .scope S_0x63491a2fdf20;
+T_1 ;
+    %wait E_0x63491a33c7f0;
+    %load/vec4 v0x63491a353de0_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_1.0, 8;
+    %vpi_call 2 39 "$display", "Value = %d", v0x63491a354100_0 {0 0 0};
+T_1.0 ;
+    %jmp T_1;
+    .thread T_1;
+    .scope S_0x63491a2fdf20;
+T_2 ;
+    %wait E_0x63491a33c7f0;
+    %load/vec4 v0x63491a353de0_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_2.0, 8;
+    %vpi_call 2 46 "$finish" {0 0 0};
+T_2.0 ;
+    %jmp T_2;
+    .thread T_2;
+    .scope S_0x63491a2fdf20;
+T_3 ;
+    %pushi/vec4 0, 0, 64;
+    %store/vec4 v0x63491a353ea0_0, 0, 64;
+    %end;
+    .thread T_3;
+    .scope S_0x63491a2fdf20;
+T_4 ;
+    %wait E_0x63491a33c7f0;
+    %load/vec4 v0x63491a353ea0_0;
+    %addi 1, 0, 64;
+    %assign/vec4 v0x63491a353ea0_0, 0;
+    %jmp T_4;
+    .thread T_4;
+    .scope S_0x63491a2fdcf0;
+T_5 ;
+T_5.0 ;
+    %delay 1, 0;
+    %load/vec4 v0x63491a3543e0_0;
+    %inv;
+    %store/vec4 v0x63491a3543e0_0, 0, 1;
+    %jmp T_5.0;
+    %end;
+    .thread T_5;
+    .scope S_0x63491a2fdcf0;
+T_6 ;
+    %vpi_call 2 84 "$dumpfile", "tut6.vcd" {0 0 0};
+    %vpi_call 2 85 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x63491a2fdf20 {0 0 0};
+    %end;
+    .thread T_6;
+    .scope S_0x63491a2fdcf0;
+T_7 ;
+    %delay 0, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x63491a354480_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x63491a3543e0_0, 0, 1;
+    %delay 2, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x63491a354480_0, 0, 1;
+    %end;
+    .thread T_7;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "tut6.v";
