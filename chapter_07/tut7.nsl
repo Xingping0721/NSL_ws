@@ -1,0 +1,19 @@
+declare tut7 simulation { }
+
+module tut7 {
+    reg count[8] = 0;
+    wire value[8];
+    func_self start(value); // there is not return value, so no need to write "ret"
+    
+    count++;
+    if(count==100) start(count);
+
+    func start seq {
+        _display("Hello World: value = %d, count = %d", value, count);
+        _display("count = %d", count); // in sequential function,
+        _display("count = %d", count); // we can use the value of count,
+        _finish("bye: count = %d", count); // which is updated in the main function
+
+        // so the value of count in output will be increasing from 100, 101, 102, 103
+    }
+}

@@ -1,0 +1,18 @@
+declare tut7_2 simulation { }
+
+module tut7_2 {
+    reg count[8] = 0;
+    func_self start();
+
+    count++;
+    if(count==100) start();
+    
+    func start seq {
+        reg loop[8];
+        for(loop:=0,9) {
+            _display("loop = %d, count = %d", loop, count);
+        } // for stetement will finish when loop is 9 immidiately,(last value of loop is 110)
+          // so the count value at the end of the loop will be 111
+        _finish("bye: count = %d", count);
+    }
+}

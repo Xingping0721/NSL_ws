@@ -1,0 +1,19 @@
+declare tut7_1 simulation { }
+
+module tut7_1 {
+    reg count[8] = 0;
+    wire value[8];
+    func_self start(value);
+
+    count++;
+    if(count==100) start(110);
+
+    func start seq {
+        reg loop[8]=0;
+        loop:=value;
+        while(count<loop) {
+            _display("loop = %d, count = %d", loop, count);
+        }
+        _finish("bye: count = %d", count);
+    }
+}
