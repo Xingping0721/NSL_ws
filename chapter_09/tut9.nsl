@@ -1,0 +1,21 @@
+#define TEST 1
+
+
+// NOTHING
+
+/* in this chapter, we learn the pri processor.
+
+    #define NAME_OF_MACRO VALUE
+
+    #ifdef NAME_OF_MACRO
+        // this code is included if the macro is defined
+    #ifndef NAME_OF_MACRO
+        // this code is included if the macro is not defined
+    #if VALUE
+
+    #else
+    #endif
+
+    #include <NAME_OF_FILE>
+
+    #include "NAME_OF_FILE"
