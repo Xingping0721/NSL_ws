@@ -3,7 +3,7 @@
 `default_nettype none
 
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:15:40 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:47:49 2026
  Licensed to :EVALUATION USER*/
 /*
  DO NOT USE ANY PART OF THIS FILE FOR COMMERCIAL PRODUCTS. 
@@ -377,10 +377,10 @@ else if (_reg_6)
 end
 endmodule
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:15:40 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:47:49 2026
  Licensed to :EVALUATION USER*/
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:15:40 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:47:49 2026
  Licensed to :EVALUATION USER*/
 
 // synthesis translate_off
@@ -389,7 +389,7 @@ endmodule
  DO NOT USE ANY PART OF THIS FILE FOR COMMERCIAL PRODUCTS. 
 */
 
-module tut10 ( p_reset , m_clock );
+module tut10_1 ( p_reset , m_clock );
   input p_reset, m_clock;
   wire p_reset, m_clock;
   reg [9:0] a;
@@ -410,35 +410,31 @@ module tut10 ( p_reset , m_clock );
   wire _net_18;
   reg _reg_21;
   reg _reg_22;
-  reg _reg_23;
-  reg _reg_24;
-  wire _net_26;
-  wire _reg_22_goto;
-  wire _reg_22_goin;
-  wire [31:0] _net_29;
-  wire [31:0] _net_30;
+  wire [31:0] _net_24;
+  wire [31:0] _net_25;
+  reg _reg_26;
 divu_10_8 divid (.m_clock(m_clock), .p_reset( p_reset), .divu_error(_divid_divu_error), .divu_done(_divid_divu_done), .divu_do(_divid_divu_do), .Q(_divid_Q), .R(_divid_R), .A(_divid_A), .B(_divid_B));
 
 always @(posedge go)
   begin
 #1 if (go===1'bx)
  begin
-$display("Warning: control hazard(tut10:go) at %d",$time);
+$display("Warning: control hazard(tut10_1:go) at %d",$time);
  end
 #1 if (((_net_18)===1'bx) || (1'b1)===1'bx) $display("hazard (_net_18 || 1'b1) line 61 at %d\n",$time);
  end
    assign  go = _net_18;
-   assign  _divid_A = (_reg_23)? ((_reg_23)?a:10'b0):10'bx;
-   assign  _divid_B = (_reg_23)? ((_reg_23)?b:8'b0):8'bx;
+   assign  _divid_A = (_reg_21)? ((_reg_21)?a:10'b0):10'bx;
+   assign  _divid_B = (_reg_21)? ((_reg_21)?b:8'b0):8'bx;
 always @(posedge _divid_divu_do)
   begin
 #1 if (_divid_divu_do===1'bx)
  begin
-$display("Warning: control hazard(tut10:_divid_divu_do) at %d",$time);
+$display("Warning: control hazard(tut10_1:_divid_divu_do) at %d",$time);
  end
-#1 if (((_reg_23)===1'bx) || (1'b1)===1'bx) $display("hazard (_reg_23 || 1'b1) line 75 at %d\n",$time);
+#1 if (((_reg_21)===1'bx) || (1'b1)===1'bx) $display("hazard (_reg_21 || 1'b1) line 72 at %d\n",$time);
  end
-   assign  _divid_divu_do = _reg_23;
+   assign  _divid_divu_do = _reg_21;
    assign  _divid_p_reset = p_reset;
    assign  _divid_m_clock = m_clock;
    assign  _net_18 = (count==16'b0000000000001010);
@@ -460,53 +456,27 @@ always @(posedge m_clock)
   begin
     if(_reg_21)
     begin
-    $finish;
-    end
-  end
-   assign  _net_26 = (_reg_22)? ((_reg_22)?(~_divid_divu_done):1'b0):1'bx;
-always @(posedge _reg_22_goto)
-  begin
-#1 if (_reg_22_goto===1'bx)
- begin
-$display("Warning: control hazard(tut10:_reg_22_goto) at %d",$time);
- end
-#1 if ((((_reg_22&_net_26))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_22&_net_26) || 1'b1) line 80 at %d\n",$time);
- end
-   assign  _reg_22_goto = (_reg_22&_net_26);
-always @(posedge _reg_22_goin)
-  begin
-#1 if (_reg_22_goin===1'bx)
- begin
-$display("Warning: control hazard(tut10:_reg_22_goin) at %d",$time);
- end
-#1 if ((((_reg_22&_net_26))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_22&_net_26) || 1'b1) line 80 at %d\n",$time);
- end
-   assign  _reg_22_goin = (_reg_22&_net_26);
-always @(posedge m_clock)
-  begin
-    if((_reg_22&(~_net_26)))
-    begin
-    $display("result = %d : %d",_divid_Q,_divid_R);
-    end
-  end
-always @(posedge m_clock)
-  begin
-    if(_reg_23)
-    begin
     $display("start %d/%d",a,b);
     end
   end
-   assign  _net_29 = _reg_16;
-   assign  _net_30 = _reg_17;
+   assign  _net_24 = _reg_16;
+   assign  _net_25 = _reg_17;
 always @(posedge m_clock)
   begin
-if ((go|_reg_24))
-      a <= (_net_29[9:0]);
+    if((_divid_divu_done|_reg_26))
+    begin
+    $finish;
+    end
+  end
+always @(posedge m_clock)
+  begin
+if ((go|_reg_22))
+      a <= (_net_24[9:0]);
 end
 always @(posedge m_clock)
   begin
-if ((go|_reg_24))
-      b <= (_net_30[7:0]);
+if ((go|_reg_22))
+      b <= (_net_25[7:0]);
 end
 always @(posedge m_clock or posedge p_reset)
   begin
@@ -526,39 +496,32 @@ always @(posedge m_clock or posedge p_reset)
   begin
 if (p_reset)
      _reg_21 <= 1'b0;
-else if ((_reg_21|_reg_22))
-      _reg_21 <= (_reg_22&(~_reg_22_goto));
+else if ((go|(_reg_21|_reg_22)))
+      _reg_21 <= (_reg_22|go);
 end
 always @(posedge m_clock or posedge p_reset)
   begin
 if (p_reset)
      _reg_22 <= 1'b0;
-else if (((_reg_22&_net_26)|(_reg_22|_reg_23)))
-      _reg_22 <= ((_reg_22&_net_26)|_reg_23);
+else if (_reg_22)
+      _reg_22 <= 1'b0;
 end
 always @(posedge m_clock or posedge p_reset)
   begin
 if (p_reset)
-     _reg_23 <= 1'b0;
-else if ((go|(_reg_23|_reg_24)))
-      _reg_23 <= (_reg_24|go);
-end
-always @(posedge m_clock or posedge p_reset)
-  begin
-if (p_reset)
-     _reg_24 <= 1'b0;
-else if (_reg_24)
-      _reg_24 <= 1'b0;
+     _reg_26 <= 1'b0;
+else if (_reg_26)
+      _reg_26 <= 1'b0;
 end
 endmodule
 
 // synthesis translate_on
 // synopsys translate_on
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:15:40 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:47:49 2026
  Licensed to :EVALUATION USER*/
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:15:40 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Sun Apr 19 17:47:49 2026
  Licensed to :EVALUATION USER*/
 
 //synthesis translate_off
@@ -572,7 +535,7 @@ module tb;
 	reg p_reset;
 	reg m_clock;
 
-	tut10 tut10_instance(
+	tut10_1 tut10_1_instance(
 		.p_reset(p_reset),
 		.m_clock(m_clock)
 	);
@@ -580,8 +543,8 @@ module tb;
 	initial forever #(tCYC/2) m_clock = ~m_clock;
 
 	initial begin
-		$dumpfile("tut10.vcd");
-		$dumpvars(0,tut10_instance);
+		$dumpfile("tut10_1.vcd");
+		$dumpvars(0,tut10_1_instance);
 	end
 
 	initial begin
