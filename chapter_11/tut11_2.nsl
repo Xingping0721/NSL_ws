@@ -28,10 +28,10 @@ module cpu {
     }
 
     proc imm {
-        exe(mread(pc++));
+        exe(mread(pc++));  // read immediate and increment pc
     }
     
-    proc exe {
+    proc exe {  // execute instruction
         wire nextpc[8];
         any {
             op == ADD: {acc:=acc+im; _display("ADD %d",im);}
@@ -39,8 +39,8 @@ module cpu {
             op == ST: {mwrite(im,acc); _display("ST %d",im);}
         }
         any {
-            op == JMP: {nextpc=im; _display("JMP %d",im);}
-            (op == JZ) && (acc == 0): {nextpc=im; _display("JZ %d",im);}
+            op == JMP: {nextpc=im; _display("   JMP %d",im);}
+            (op == JZ) && (acc == 0): {nextpc=im; _display("   JZ %d",im);}
             else: nextpc=pc;
         }
         ift(nextpc);
