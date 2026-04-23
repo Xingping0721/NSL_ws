@@ -1,0 +1,40 @@
+/**
+    statemachine example
+
+    ステートマシンの利用上、注意していただきたい点があります。状態変数の初期化はリセットの
+    ときに行われますが、通常の動作中は行われないので、手続きに記述した状態を、手続きの呼
+    出しごとに初期状態に戻したい場合、手続きの終了前に、初期状態に遷移するgoto文を記述
+    する必要があります。
+
+*/
+
+// goto statement in state is just "状態の変更（ハードの状態遷移）"
+
+
+declare tut12 simulation {}
+
+module tut12 {
+    state_name state1, state2, state3;
+
+    state state1 {
+        reg c1[2]=0;
+        if(c1++ == 3) goto state2;
+        _display("in state1 %d",c1);
+    }
+
+    state state2 { // if statement in state1 is true, state2 wil be called but it is called next clock.
+                    // not same clock as if statement in state1 is true.
+        reg c2[2]=0;
+        if(c2++ == 3) goto state3;
+        _display("in state2 %d",c2);
+    }
+
+    state state3 {
+        reg c3[2]=0;
+        if(c3++ == 3) {
+            goto state1; // 手続きの終了前 state1に遷移することで、c1が初期化される
+            _finish();
+        }
+        _display("in state3 %d",c3);
+    }
+}
