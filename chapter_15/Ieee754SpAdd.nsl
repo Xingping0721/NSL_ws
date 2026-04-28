@@ -1,0 +1,482 @@
+/*
+    IEEE 754 type Single Precision Floating Point Pipeline Adder
+    Copyright (c) 2011 Naohiko Shimizu, IP ARCH, Inc.
+    This circuit is provided only for demonstration of NSL description.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.
+    If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+/*
+    Adder interface declaration.
+    We will have two inputs 'a' and 'b' those must be normalized
+    single precision IEEE754 numbers.
+    To start the circuit, you can invoke 'exe' with two arguments.
+    When the circuit finish the calculation, it will send the result
+    with done signal.
+    The circuit is completely pipelined.
+    And you can invoke it in every cycle.
+*/
+declare Ieee754SpAdd {
+    input a[32];
+    input b[32];
+    output result[32];
+    func_in exe(a,b);
+    func_out done(result);
+}
+
+
+/*
+    The struct Ieee754Sp defines single precision format of IEEE754.
+    It has Sign bit, 8bit Exponent, 23bit Mantissa.
+*/
+
+
+struct Ieee754Sp {
+    Sign;
+    Exponent[8];
+    Mantissa[23];
+};
+
+
+
+/*
+    We will use Barrel Shifter for pre-shift the mantissa.
+    Though the required length is not 32bit, we will use 32bit shifter.
+    Logic synthesizer will do the compaction of unused net.
+*/
+
+declare BarrelShift {
+    input a[32];
+    input sa[8];
+    output f[32];
+    func_in exe(a,sa):f;
+}
+/*
+    After the mantissa calculation, we need suppress leading zeros
+    of the result.
+    LeadingZeroShift provide the function.
+    It will return the result and shifted amount.
+*/
+declare LeadingZeroShift {
+    input a[32];
+    output shamt[8];
+    output f[32];
+    func_in exe(a):f;
+}
+/*
+    Barrel Shifter body.
+    We will decode each bit of shift amount and
+    determine to shift the contents or not.
+*/
+
+
+module BarrelShift {
+    wire t0[32],t1[32],t2[32],t3[32],t4[32];
+    func exe {
+        if(sa[0]) t0=a>>1;
+        else        t0=a;
+        if(sa[1]) t1=t0>>2;
+        else        t1=t0;
+        if(sa[2]) t2=t1>>4;
+        else        t2=t1;
+        if(sa[3]) t3=t2>>8;
+        else        t3=t2;
+        if(sa[4]) t4=t3>>16;
+        else        t4=t3;
+        if(sa[7:5]==0)  return t4;
+        else    return 0;
+    }
+}
+
+
+/*
+    Leading Zero Shifter body.
+    We will evaluate continuous zero from MSB to LSB.
+*/
+
+
+module LeadingZeroShift {
+    wire t0[32],t1[32],t2[32],t3[32],t4[32];
+    wire a0,a1,a2,a3,a4;
+    func exe {
+        if(a[31:16]==0){ a4 = 1; t0 = a<<16; }
+        else{ a4 = 0; t0=a; }
+        if(t0[31:24]==0) { a3 = 1; t1 = t0<<8; }
+        else
+        { a3 = 0; t1=t0; }
+        if(t1[31:28]==0) { a2 = 1; t2 = t1<<4; }
+        else
+        { a2 = 0; t2=t1; }
+        if(t2[31:30]==0) { a1 = 1; t3 = t2<<2; }
+        else{ a1 = 0; t3=t2; }
+        if(t3[31]==0){ a0 = 1; t4 = t3<<1; }
+        else{ a0 = 0; t4=t3; }
+        shamt = 8'({a4,a3,a2,a1,a0});
+        return t4;
+    }
+}
+
+/*
+    Floating Adder body.
+    It has 4 stages 'stageA' through 'stageD.'
+    At 'stageD' we will get the result.
+    exe:
+    invoke the circuit and calculate exponents differences.
+    stageA: pre-shift for adder operation.
+    stageB: Mantissa addition.
+    stageC: Leading zero shift.
+    stageD: Return result.
+*/
+
+/*
+    Floating Adder body.
+*/
+module Ieee754SpAdd {
+    BarrelShift bshft;
+    LeadingZeroShift lzshft;
+
+    reg Aexdf[8];
+    Ieee754Sp reg x, y;
+    proc_name stageA(Aexdf, x, y);
+
+    reg Bm1[32], Bm2[32], Bs1, Bs2, Bexp[8];
+    proc_name stageB(Bm1, Bm2, Bs1, Bs2, Bexp);
+    wire s1, s2, x1[32], x2[32], r1[32];
+    func_self madd(s1, s2, x1, x2) : r1;
+
+    reg Cm[32], Cs, Cexp[8];
+    proc_name stageC(Cm, Cs, Cexp);
+
+    Ieee754Sp reg z;
+    proc_name stageD(z);
+
+    // -----------------------------------------------------
+    // 【Start】 桁の比較とスワップ判定
+    // -----------------------------------------------------
+    func exe {
+        wire wdiff[9];
+        wire next_Aexdf[8];
+        wire next_x[32];
+        wire next_y[32];
+
+        wdiff = 9'((Ieee754Sp)(a).Exponent) - 9'((Ieee754Sp)(b).Exponent);
+
+        _display("[exe]    Input a: %x, b: %x", a, b);
+        _display("[exe]    Exp diff (a - b): %x", wdiff);
+
+        if(wdiff[8]) {
+            next_Aexdf = -wdiff[7:0];
+            next_x = b;
+            next_y = a;
+            _display("[exe]    Swap: a < b. Shift amount: %d", next_Aexdf);
+        }
+        else {
+            next_Aexdf = wdiff[7:0];
+            next_x = a;
+            next_y = b;
+            _display("[exe]    No Swap: a >= b. Shift amount: %d", next_Aexdf);
+        }
+        
+        stageA(next_Aexdf, next_x, next_y);
+    }
+
+    // -----------------------------------------------------
+    // 【Stage A】 小数点合わせ（Pre-shift）
+    // -----------------------------------------------------
+    proc stageA {
+        wire xmsb[3],ymsb[3];
+        wire shifted_y[32];
+
+        if(x.Exponent==0) xmsb=0;
+        else              xmsb=3'b1;
+        
+        if(y.Exponent==0) ymsb=0;
+        else              ymsb=3'b1;
+
+        shifted_y = bshft.exe({ymsb,y.Mantissa,6'b0}, Aexdf);
+
+        _display("[stageA] x.Mantissa(base): %x", {xmsb, x.Mantissa, 6'b0});
+        _display("[stageA] y.Mantissa(shifted): %x (shifted by %d)", shifted_y, Aexdf);
+
+        stageB({xmsb,x.Mantissa,6'b0},
+               shifted_y,
+               x.Sign,
+               y.Sign,
+               x.Exponent );
+    }
+
+    func madd {
+        return (32#s1^x1) + 32'(s1) + (32#s2^x2) + 32'(s2);
+    }
+
+    // -----------------------------------------------------
+    // 【Stage B】 仮数部の足し算
+    // -----------------------------------------------------
+    proc stageB {
+        wire m3[32];
+        wire next_Cm[32];
+        
+        m3 = madd(Bs1,Bs2,Bm1,Bm2);
+        
+        if(m3[31]) {
+            next_Cm = -m3;
+            _display("[stageB] m3 is negative: %x -> %x", m3, next_Cm);
+        } else {
+            next_Cm = m3;
+            _display("[stageB] m3 is positive: %x", m3);
+        }
+            
+        stageC( next_Cm, m3[31], Bexp );
+    }
+
+    // -----------------------------------------------------
+    // 【Stage C】 正規化（Leading Zero Shift）
+    // -----------------------------------------------------
+    proc stageC {
+        wire next_z[32];
+        wire norm_mantissa[32];
+        wire shift_amount[8];
+
+        if(Cm==0) {
+            next_z = 0;
+            _display("[stageC] Cm is 0. Result will be 0.");
+        }
+        else if(Cexp==0) {
+            next_z = {Cs, Cexp, Cm[28:6]};
+            _display("[stageC] Cexp is 0. Un-normalized value.");
+        }
+        else {
+            norm_mantissa = lzshft.exe({Cm[30:0], 1'b0});
+            shift_amount = lzshft.shamt;
+            next_z = {Cs, 8'(Cexp - shift_amount + 1), norm_mantissa[30:8]};
+            _display("[stageC] Leading zero shift: %d. Normalized Mantissa: %x", shift_amount, norm_mantissa);
+        }
+            
+        stageD(next_z);
+    }
+
+    // -----------------------------------------------------
+    // 【Stage D】 結果出力
+    // -----------------------------------------------------
+    proc stageD {
+        _display("[stageD] Final Result z: %x", z);
+        done(z);
+        finish;
+    }
+}
+
+
+// module Ieee754SpAdd {
+// /*
+//     Resources defenitions.
+// */
+//     BarrelShift bshft;
+//     LeadingZeroShift lzshft;
+
+
+// /*
+//     stageA resources
+// */
+//     reg Aexdf[8];
+//     Ieee754Sp reg x, y;
+//     proc_name stageA(Aexdf, x, y);
+
+
+// /*
+//     stageB resources
+// */
+//     reg Bm1[32], Bm2[32], Bs1, Bs2, Bexp[8];
+//     proc_name stageB(Bm1, Bm2, Bs1, Bs2, Bexp);
+//     wire s1, s2, x1[32], x2[32], r1[32];
+//     func_self madd(s1, s2, x1, x2) : r1;
+
+
+// /*
+//     stageC resources
+// */
+//     reg Cm[32], Cs, Cexp[8];
+//     proc_name stageC(Cm, Cs, Cexp);
+
+
+// /*
+//     stageD resources
+// */
+//     Ieee754Sp reg z;
+//     proc_name stageD(z);
+
+
+// /*
+//     func exe(a,b) is the starting point of this adder.
+// */
+//     func exe {      //  func_in exe(a,b);
+//         wire wdiff[9];
+//         wire next_Aexdf[8];
+//         wire next_x[32];
+//         wire next_y[32];
+
+// /*
+//     In IEEE 754, the exponent is biased binary.
+//     Therefore, negative value of subtraction will
+//     show that 'b.Exponent > a.Exponent.'
+//     62We will select pre-shift argument depending on the result.
+// */
+//         wdiff = 9'((Ieee754Sp)(a).Exponent) - 9'((Ieee754Sp)(b).Exponent); // it means if a < b, wdiff will be negative value.
+//         if(wdiff[8]) { // this means a < b, we will swap a and b for pre-shift.
+//             // stageA( -wdiff[7:0], b, a );
+//             next_Aexdf = -wdiff[7:0];
+//             next_x = b;
+//             next_y = a;
+//         }
+//         else { // this means a >= b, we will not swap a and b for pre-shift.
+//             // stageA(   wdiff[7:0], a, b );
+//             next_Aexdf = wdiff[7:0];
+//             next_x = a;
+//             next_y = b;
+//         }
+//         stageA(next_Aexdf, next_x, next_y);
+//     }
+
+
+// /*
+//     proc_name stageA(Aexdf, x, y);
+//     We will pre-shift 'y' for addition.
+//     Because IEEE754 suppress MSB's '1' in mantissa, we will add it here.
+//     But if the exponent part is zero, it may be un-normalized value.
+//     Therefore, we will not add '1'.
+// */
+//     proc stageA {  //     proc_name stageA(Aexdf, x, y);
+//         wire xmsb[3],ymsb[3];  // 3bit
+
+//         if(x.Exponent==0)
+//             xmsb=0;
+//         else
+//             xmsb=3'b1;  // 仮数部の一番上の「1」は省略して記録されています。計算のために、まずこの「1」を先頭にくっつけます.
+//         if(y.Exponent==0)
+//             ymsb=0;
+//         else
+//             ymsb=3'b1; // 仮数部の一番上の「1」は省略して記録されています。計算のために、まずこの「1」を先頭にくっつけます. 
+
+
+//         stageB({xmsb,x.Mantissa,6'b0},
+//             bshft.exe({ymsb,y.Mantissa,6'b0},Aexdf),
+//             x.Sign,
+//             y.Sign,
+//             x.Exponent );
+//     }
+// /*
+//     proc_name stageB(Bm1, Bm2, Bs1, Bs2, Bexp);
+//     Add two mantissa values.
+//     In IEEE754, the mantissa does not have sign it self.
+//     Therefore, if the addition shows negative value,
+//     we will make 2's complement of it.
+//     */
+//     /*
+//     s1,s2 is sign bit for x1,x2.
+//     When the value is negative, we will make 2's complement.
+// */
+//     func madd {
+//         return (32#s1^x1) + 32'(s1) + (32#s2^x2) + 32'(s2);
+//     }
+
+
+//     proc stageB {  //     stageB(Bm1, Bm2, Bs1, Bs2, Bexp);
+//         wire m3[32];
+//         wire next_Cm[32]; // 中継用の配線
+
+//         m3 = madd(Bs1,Bs2,Bm1,Bm2);
+//         if(m3[31])  // if the result is negative, we will change the sign to pisitive
+//             // stageC( -m3, m3[31], Bexp );
+//             next_Cm = -m3;
+//         else
+//             // stageC( m3, m3[31], Bexp );
+//             next_Cm = m3;
+
+//         stageC(next_Cm, m3[31], Bexp);
+//     }
+
+
+// /*
+//     proc_name stageC(Cm, Cs, Cexp);
+//     We now have mantissa 'Cm', sign 'Cs', exponent 'Cexp.'
+//     But we need to suppress leading zero of mantissa for n ormalize.
+//     If the result of mantissa calculation was 0, we will return 0.
+//     Or if the exponent was 0, it shows un -normalized value,
+//     then we will not do the leading zero shift.
+// */
+//     proc stageC {  //   stageC(Cm, Cs, Cexp);
+
+//         wire next_z[32]; // 中継用の配線
+
+//         if(Cm==0)
+//             // stageD(0);
+//             next_z = 0;
+//         else if(Cexp==0)
+//             // stageD({Cs,Cexp,Cm[28:6]});
+//             next_z = {Cs,Cexp,Cm[28:6]};
+//         else
+//             // stageD( {Cs,
+//             // 8'(Cexp - lzshft.shamt + 1),
+//             // lzshft.exe({Cm[30:0], 1'b0})[30:8]
+//             // } );
+//             next_z = {Cs,
+//                 8'(Cexp - lzshft.shamt + 1),
+//                 lzshft.exe({Cm[30:0], 1'b0})[30:8]
+//             };
+//         stageD(next_z);
+//     }
+// /*
+// proc_name stageD(z);
+// return ack signal and the result from adder.
+// */
+//     proc stageD {
+//         done(z);
+//         finish;
+//     }
+// }
+
+///////////////////////// below is the test bench for simulation /////////////////////////
+// i will calclate 30.0 + 8000.0 for test.
+
+
+/*
+    シミュレーション用のトップモジュール（テストベンチ）
+    これが「外の世界（親回路）」として振る舞います。
+*/
+declare sim { }
+
+module sim {
+    // さっきの足し算回路を「adder」という名前で部品として用意する
+    Ieee754SpAdd adder;
+    
+    // 時間を測るための簡単なカウンター
+    reg count[4] = 0;
+
+    // シミュレーション開始（countが0の時、1回だけ実行）
+    if (count == 0) {
+        // 30.0 (0x41F00000) と 8000.0 (0x45FA0000) を入力して計算スタート！
+        adder.exe(32'h41F00000, 32'h45FA0000);
+        _display("--- Simulation Start ---");
+        _display("Calculate: 30.0 + 8000.0");
+    }
+
+    // 先ほど話題になった「done」ランプが光るのを待ち構える！
+    if (adder.done) {
+        // doneが来たら、結果(adder.result)を画面に表示して終了する
+        _display("Done! Result: %x (Expected: 45faf000 = 8030.0)", adder.result);
+        _finish(); // シミュレーションを終了する命令
+    }
+
+    // 毎クロック、カウンターを増やしていく
+    count++;
+}
