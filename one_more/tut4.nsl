@@ -1,0 +1,20 @@
+declare tut4 simulation { }
+    module tut4 {
+    reg count[8] = 0;
+    wire value[8];
+    func_self
+    start(value);
+
+    count++;
+    if(count==100) start(110); // in this law, the 110 is transfor to value variable and the start seq will be started in same clock.
+
+    func start seq {
+        reg loop[8]=0; // this will be reset to 0
+        loop:=value;   // this will be reset to 110 // this is not a statement so 
+
+        while(count<loop) {  // this will start the clock 100
+            _display("loop = %d, count = %d", loop, count);  // this will print 101, 102, 103, 104, 105, 106, 107, 108, 109
+        }
+        _finish("bye: count = %d", count);  /// last one is 111. not 110.
+    }
+}

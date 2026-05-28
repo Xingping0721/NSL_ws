@@ -7,9 +7,51 @@ module tut13 {
     count++;
     if(count==100) start(count);
     func start seq { // func seq will start same clock as the caller.
-        _display("Hello World: value = %d, count = %d", value, count);
-        _display("count = %d", count);
-        _display("count = %d", count);
-        _finish("bye: count = %d", count);
+        _display("Hello World: value = %d, count = %d", value, count);  /// 100, 100 //最初の動作文はシーケンスブロックを呼び出したクロックにおいて実行されます。
+        _display("count = %d", count);  /// 101
+        _display("count = %d", count);  /// 102
+        _finish("bye: count = %d", count);  /// 103
     }
 }
+
+
+
+// result, if we use seq, the code will execute step by step, so the value of count will be 100, 101, 102, 103.
+
+
+// vvp tut13.vvp
+// VCD info: dumpfile tut13.vcd opened for output.
+// Hello World: value = 100, count = 100
+// count = 101
+// count = 102
+// bye: count = 103
+
+
+
+
+
+// declare tut13 simulation { }
+// module tut13 {
+//     reg count[8] = 0;
+//     wire value[8];
+//     func_self
+//     start(value);
+//     count++;
+//     if(count==100) start(count);
+//     func start { // func seq will start same clock as the caller.
+//         _display("Hello World: value = %d, count = %d", value, count);
+//         _display("count = %d", count);
+//         _display("count = %d", count);
+//         _finish("bye: count = %d", count);
+//     }
+// }
+
+
+// /// results, every value is 100.
+
+// // vvp tut13.vvp
+// // VCD info: dumpfile tut13.vcd opened for output.
+// // Hello World: value = 100, count = 100
+// // count = 100
+// // count = 100
+// // bye: count = 100

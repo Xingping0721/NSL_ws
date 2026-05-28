@@ -3,7 +3,7 @@
 `default_nettype none
 
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Thu May 14 11:28:57 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Thu May 21 12:22:29 2026
  Licensed to :EVALUATION USER*/
 
 // synthesis translate_off
@@ -19,6 +19,10 @@ module tut13 ( p_reset , m_clock );
   wire [7:0] value;
   wire start;
   wire _net_0;
+  reg _reg_1;
+  reg _reg_2;
+  reg _reg_3;
+  reg _reg_4;
 
    assign  value = (_net_0)? ((_net_0)?count:8'b0):8'bx;
 always @(posedge start)
@@ -33,37 +37,37 @@ $display("Warning: control hazard(tut13:start) at %d",$time);
    assign  _net_0 = (count==8'b01100100);
 always @(posedge m_clock)
   begin
-    if(start)
-    begin
-    $display("Hello World: value = %d, count = %d",value,count);
-    end
-  end
-always @(posedge m_clock)
-  begin
-    if(start)
-    begin
-    $display("count = %d",count);
-    end
-  end
-always @(posedge m_clock)
-  begin
-    if(start)
-    begin
-    $display("count = %d",count);
-    end
-  end
-always @(posedge m_clock)
-  begin
-    if(start)
+    if(_reg_1)
     begin
     $display("bye: count = %d",count);
     end
   end
 always @(posedge m_clock)
   begin
-    if(start)
+    if(_reg_1)
     begin
     $finish;
+    end
+  end
+always @(posedge m_clock)
+  begin
+    if(_reg_2)
+    begin
+    $display("count = %d",count);
+    end
+  end
+always @(posedge m_clock)
+  begin
+    if(_reg_3)
+    begin
+    $display("count = %d",count);
+    end
+  end
+always @(posedge m_clock)
+  begin
+    if((start|_reg_4))
+    begin
+    $display("Hello World: value = %d, count = %d",value,count);
     end
   end
 always @(posedge m_clock or posedge p_reset)
@@ -72,15 +76,43 @@ if (p_reset)
      count <= 8'b00000000;
 else   count <= (count+8'b00000001);
 end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_1 <= 1'b0;
+else if ((_reg_1|_reg_2))
+      _reg_1 <= _reg_2;
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_2 <= 1'b0;
+else if ((_reg_2|_reg_3))
+      _reg_2 <= _reg_3;
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_3 <= 1'b0;
+else if ((start|(_reg_3|_reg_4)))
+      _reg_3 <= (_reg_4|start);
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_4 <= 1'b0;
+else if (_reg_4)
+      _reg_4 <= 1'b0;
+end
 endmodule
 
 // synthesis translate_on
 // synopsys translate_on
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Thu May 14 11:28:57 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Thu May 21 12:22:29 2026
  Licensed to :EVALUATION USER*/
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Thu May 14 11:28:57 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Thu May 21 12:22:29 2026
  Licensed to :EVALUATION USER*/
 
 //synthesis translate_off
