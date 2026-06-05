@@ -1,5 +1,9 @@
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 20:16:39 2026
+`timescale	1ns / 1ns
+`default_nettype none
+
+
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 21:31:55 2026
  Licensed to :EVALUATION USER*/
 /*
  DO NOT USE ANY PART OF THIS FILE FOR COMMERCIAL PRODUCTS. 
@@ -96,7 +100,7 @@ always @(posedge sub)
  begin
 $display("Warning: control hazard(divu_10_8:sub) at %d",$time);
  end
-#1 if ((((_reg_5&(~_net_7)))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_5&(~_net_7)) || 1'b1) line 31 at %d\n",$time);
+#1 if ((((_reg_5&(~_net_7)))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_5&(~_net_7)) || 1'b1) line 30 at %d\n",$time);
  end
 
 // synthesis translate_on
@@ -163,8 +167,8 @@ always @(posedge _reg_5_goto)
  begin
 $display("Warning: control hazard(divu_10_8:_reg_5_goto) at %d",$time);
  end
-#1 if (((((_reg_5&(~_net_7))&_net_8))===1'bx) || (1'b1)===1'bx) $display("hazard (((_reg_5&(~_net_7))&_net_8) || 1'b1) line 38 at %d\n",$time);
-#1 if ((((_reg_5&_net_7))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_5&_net_7) || 1'b1) line 38 at %d\n",$time);
+#1 if (((((_reg_5&(~_net_7))&_net_8))===1'bx) || (1'b1)===1'bx) $display("hazard (((_reg_5&(~_net_7))&_net_8) || 1'b1) line 37 at %d\n",$time);
+#1 if ((((_reg_5&_net_7))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_5&_net_7) || 1'b1) line 37 at %d\n",$time);
  end
 
 // synthesis translate_on
@@ -180,7 +184,7 @@ always @(posedge _reg_4_goin)
  begin
 $display("Warning: control hazard(divu_10_8:_reg_4_goin) at %d",$time);
  end
-#1 if ((((_reg_5&_net_7))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_5&_net_7) || 1'b1) line 38 at %d\n",$time);
+#1 if ((((_reg_5&_net_7))===1'bx) || (1'b1)===1'bx) $display("hazard ((_reg_5&_net_7) || 1'b1) line 37 at %d\n",$time);
  end
 
 // synthesis translate_on
@@ -208,7 +212,7 @@ always @(posedge _reg_5_goin)
  begin
 $display("Warning: control hazard(divu_10_8:_reg_5_goin) at %d",$time);
  end
-#1 if (((((_reg_5&(~_net_7))&_net_8))===1'bx) || (1'b1)===1'bx) $display("hazard (((_reg_5&(~_net_7))&_net_8) || 1'b1) line 38 at %d\n",$time);
+#1 if (((((_reg_5&(~_net_7))&_net_8))===1'bx) || (1'b1)===1'bx) $display("hazard (((_reg_5&(~_net_7))&_net_8) || 1'b1) line 37 at %d\n",$time);
  end
 
 // synthesis translate_on
@@ -256,7 +260,7 @@ always @(posedge divu_done)
  begin
 $display("Warning: control hazard(divu_10_8:divu_done) at %d",$time);
  end
-#1 if (((_reg_4)===1'bx) || (1'b1)===1'bx) $display("hazard (_reg_4 || 1'b1) line 39 at %d\n",$time);
+#1 if (((_reg_4)===1'bx) || (1'b1)===1'bx) $display("hazard (_reg_4 || 1'b1) line 38 at %d\n",$time);
  end
 
 // synthesis translate_on
@@ -373,5 +377,199 @@ else if (_reg_6)
 end
 endmodule
 
-/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 20:16:39 2026
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 21:31:55 2026
  Licensed to :EVALUATION USER*/
+
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 21:31:55 2026
+ Licensed to :EVALUATION USER*/
+
+// synthesis translate_off
+// synopsys translate_off
+/*
+ DO NOT USE ANY PART OF THIS FILE FOR COMMERCIAL PRODUCTS. 
+*/
+
+module tut8_alt ( p_reset , m_clock );
+  input p_reset, m_clock;
+  wire p_reset, m_clock;
+  reg [9:0] a;
+  reg [7:0] b;
+  wire go;
+  reg [15:0] count;
+  reg [31:0] _reg_16;
+  reg [31:0] _reg_17;
+  wire [9:0] _divid_A;
+  wire [7:0] _divid_B;
+  wire [9:0] _divid_Q;
+  wire [7:0] _divid_R;
+  wire _divid_divu_do;
+  wire _divid_divu_done;
+  wire _divid_divu_error;
+  wire _divid_p_reset;
+  wire _divid_m_clock;
+  wire _net_18;
+  reg _reg_21;
+  reg _reg_22;
+  wire [31:0] _net_24;
+  wire [31:0] _net_25;
+  reg _reg_26;
+  reg _reg_27;
+divu_10_8 divid (.m_clock(m_clock), .p_reset( p_reset), .divu_error(_divid_divu_error), .divu_done(_divid_divu_done), .divu_do(_divid_divu_do), .Q(_divid_Q), .R(_divid_R), .A(_divid_A), .B(_divid_B));
+
+always @(posedge go)
+  begin
+#1 if (go===1'bx)
+ begin
+$display("Warning: control hazard(tut8_alt:go) at %d",$time);
+ end
+#1 if (((_net_18)===1'bx) || (1'b1)===1'bx) $display("hazard (_net_18 || 1'b1) line 49 at %d\n",$time);
+ end
+   assign  go = _net_18;
+   assign  _divid_A = (_reg_21)? ((_reg_21)?a:10'b0):10'bx;
+   assign  _divid_B = (_reg_21)? ((_reg_21)?b:8'b0):8'bx;
+always @(posedge _divid_divu_do)
+  begin
+#1 if (_divid_divu_do===1'bx)
+ begin
+$display("Warning: control hazard(tut8_alt:_divid_divu_do) at %d",$time);
+ end
+#1 if (((_reg_21)===1'bx) || (1'b1)===1'bx) $display("hazard (_reg_21 || 1'b1) line 58 at %d\n",$time);
+ end
+   assign  _divid_divu_do = _reg_21;
+   assign  _divid_p_reset = p_reset;
+   assign  _divid_m_clock = m_clock;
+   assign  _net_18 = (count==16'b0000000000001010);
+always @(posedge m_clock)
+  begin
+    if((_divid_divu_error != 1'b0))
+    begin
+    $display("divid error");
+    end
+  end
+always @(posedge m_clock)
+  begin
+    if((_divid_divu_error != 1'b0))
+    begin
+    $finish;
+    end
+  end
+always @(posedge m_clock)
+  begin
+    if(_reg_21)
+    begin
+    $display("start %d/%d",a,b);
+    end
+  end
+   assign  _net_24 = _reg_16;
+   assign  _net_25 = _reg_17;
+always @(posedge m_clock)
+  begin
+    if(_reg_26)
+    begin
+    $finish;
+    end
+  end
+always @(posedge m_clock)
+  begin
+    if((_divid_divu_done|_reg_27))
+    begin
+    $display("result = %d : %d",_divid_Q,_divid_R);
+    end
+  end
+always @(posedge m_clock)
+  begin
+if ((go|_reg_22))
+      a <= (_net_24[9:0]);
+end
+always @(posedge m_clock)
+  begin
+if ((go|_reg_22))
+      b <= (_net_25[7:0]);
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     count <= 16'b0000000000000000;
+else   count <= (count+16'b0000000000000001);
+end
+always @(posedge m_clock)
+  begin
+  _reg_16 <= ($random);
+end
+always @(posedge m_clock)
+  begin
+  _reg_17 <= ($random);
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_21 <= 1'b0;
+else if ((go|(_reg_21|_reg_22)))
+      _reg_21 <= (_reg_22|go);
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_22 <= 1'b0;
+else if (_reg_22)
+      _reg_22 <= 1'b0;
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_26 <= 1'b0;
+else if ((_divid_divu_done|(_reg_26|_reg_27)))
+      _reg_26 <= (_reg_27|_divid_divu_done);
+end
+always @(posedge m_clock or posedge p_reset)
+  begin
+if (p_reset)
+     _reg_27 <= 1'b0;
+else if (_reg_27)
+      _reg_27 <= 1'b0;
+end
+endmodule
+
+// synthesis translate_on
+// synopsys translate_on
+
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 21:31:55 2026
+ Licensed to :EVALUATION USER*/
+
+/*Produced by NSL Core(version=20250428), IP ARCH, Inc. Fri Jun  5 21:31:55 2026
+ Licensed to :EVALUATION USER*/
+
+//synthesis translate_off
+/*
+ DO NOT USE ANY PART OF THIS FILE FOR COMMERCIAL PRODUCTS. 
+*/
+module tb;
+	parameter tCYC=2;
+	parameter tPD=(tCYC/10);
+
+	reg p_reset;
+	reg m_clock;
+
+	tut8_alt tut8_alt_instance(
+		.p_reset(p_reset),
+		.m_clock(m_clock)
+	);
+
+	initial forever #(tCYC/2) m_clock = ~m_clock;
+
+	initial begin
+		$dumpfile("tut8_alt.vcd");
+		$dumpvars(0,tut8_alt_instance);
+	end
+
+	initial begin
+		#(tPD)
+			p_reset = 1;
+			m_clock = 0;
+		#(tCYC)
+			p_reset = 0;
+	end
+
+endmodule
+
+//synthesis translate_on
