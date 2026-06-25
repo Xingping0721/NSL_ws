@@ -1,0 +1,10 @@
+declare a simulation {}
+
+module a {
+    reg D, EN;
+    reg Q;
+
+    if (EN) {
+        Q := D;
+    }
+}
